@@ -50,6 +50,34 @@ The "*Description" key strings will be used when asking the user for permission 
 </platform>
 ```
 
+1. In AppDelegate.m (or AppDelegate.swift) add
+
+```
+#import <GoogleCast/GoogleCast.h>
+```
+
+```swift
+import GoogleCast
+```
+
+and insert the following in the `application:didFinishLaunchingWithOptions` method, ideally at the beginning (or right after Flipper initialization):
+
+```
+NSString *receiverAppID = kGCKDefaultMediaReceiverApplicationID; // or @"ABCD1234"
+GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:receiverAppID];
+GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
+[GCKCastContext setSharedInstanceWithOptions:options];
+```
+
+```swift
+let receiverAppID = kGCKDefaultMediaReceiverApplicationID // or "ABCD1234"
+let criteria = GCKDiscoveryCriteria(applicationID: receiverAppID)
+let options = GCKCastOptions(discoveryCriteria: criteria)
+GCKCastContext.setSharedInstanceWith(options)
+```
+
+If using a custom receiver, replace kGCKDefaultMediaReceiverApplicationID with your receiver app id.
+
 ## Chromecast Icon Assets  
 [chromecast-assets.zip](https://github.com/jellyfin/cordova-plugin-chromecast/wiki/chromecast-assets.zip)
 

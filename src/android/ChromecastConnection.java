@@ -6,9 +6,11 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.arch.core.util.Function;
 import androidx.mediarouter.app.MediaRouteChooserDialog;
+import androidx.mediarouter.media.MediaControlIntent;
 import androidx.mediarouter.media.MediaRouteSelector;
 import androidx.mediarouter.media.MediaRouter;
 import androidx.mediarouter.media.MediaRouter.RouteInfo;
@@ -46,9 +48,6 @@ public class ChromecastConnection {
     /** The Listener callback. */
     private Listener listener;
 
-    /** Initialize lifetime variable. */
-    private String appId;
-
     /**
      * Constructor.
      * @param act the current context
@@ -56,13 +55,8 @@ public class ChromecastConnection {
      */
     ChromecastConnection(Activity act, Listener connectionListener) {
         this.activity = act;
-        this.settings = activity.getSharedPreferences("CORDOVA-PLUGIN-CHROMECAST_ChromecastConnection", 0);
-        this.appId = settings.getString("appId", CastMediaControlIntent.DEFAULT_MEDIA_RECEIVER_APPLICATION_ID);
         this.listener = connectionListener;
         this.chromecastSession = new ChromecastSession(activity, listener);
-
-        // Set the initial appId
-        CastOptionsProvider.setAppId(appId);
 
         // This is the first call to getContext which will start up the
         // CastContext and prep it for searching for a session to rejoin
@@ -93,25 +87,11 @@ public class ChromecastConnection {
 
     /**
      * Must be called each time the appId changes and at least once before any other method is called.
-     * @param applicationId the app id to use
      * @param callback called when initialization is complete
      */
-    public void initialize(String applicationId, CallbackContext callback) {
+    public void initialize(CallbackContext callback) {
         activity.runOnUiThread(new Runnable() {
             public void run() {
-                // If the app Id changed
-                if (applicationId == null || !applicationId.equals(appId)) {
-                    // If app Id is valid
-                    if (isValidAppId(applicationId)) {
-                        // Set the new app Id
-                        setAppId(applicationId);
-                    } else {
-                        // Else, just return
-                        callback.success();
-                        return;
-                    }
-                }
-
                 // Tell the client that initialization was a success
                 callback.success();
 
@@ -155,38 +135,6 @@ public class ChromecastConnection {
 
     private CastSession getSession() {
         return getSessionManager().getCurrentCastSession();
-    }
-
-    private void setAppId(String applicationId) {
-        this.appId = applicationId;
-        this.settings.edit().putString("appId", appId).apply();
-        getContext().setReceiverApplicationId(appId);
-    }
-
-    /**
-     * Tests if an application receiver id is valid.
-     * @param applicationId - application receiver id
-     * @return true if valid
-     */
-    private boolean isValidAppId(String applicationId) {
-        try {
-            ScanCallback cb = new ScanCallback() {
-                @Override
-                void onRouteUpdate(List<RouteInfo> routes) { }
-            };
-            // This will throw if the applicationId is invalid
-            getMediaRouter().addCallback(new MediaRouteSelector.Builder()
-                            .addControlCategory(CastMediaControlIntent.categoryForCast(applicationId))
-                            .build(),
-                    cb,
-                    MediaRouter.CALLBACK_FLAG_PERFORM_ACTIVE_SCAN);
-            // If no exception we passed, so remove the callback
-            getMediaRouter().removeCallback(cb);
-            return true;
-        } catch (IllegalArgumentException e) {
-            // Don't set the appId if it is not a valid receiverApplicationID
-            return false;
-        }
     }
 
     /**
@@ -343,7 +291,8 @@ public class ChromecastConnection {
                     // TODO accept theme as a config.xml option
                     MediaRouteChooserDialog builder = new MediaRouteChooserDialog(activity, androidx.appcompat.R.style.Theme_AppCompat_NoActionBar);
                     builder.setRouteSelector(new MediaRouteSelector.Builder()
-                            .addControlCategory(CastMediaControlIntent.categoryForCast(appId))
+                            .addControlCategory(MediaControlIntent.CATEGORY_LIVE_VIDEO)
+                            .addControlCategory(MediaControlIntent.CATEGORY_REMOTE_PLAYBACK)
                             .build());
                     builder.setCanceledOnTouchOutside(true);
                     builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -431,7 +380,8 @@ public class ChromecastConnection {
 
                 // Add the callback in active scan mode
                 getMediaRouter().addCallback(new MediaRouteSelector.Builder()
-                        .addControlCategory(CastMediaControlIntent.categoryForCast(appId))
+                        .addControlCategory(MediaControlIntent.CATEGORY_LIVE_VIDEO)
+                        .addControlCategory(MediaControlIntent.CATEGORY_REMOTE_PLAYBACK)
                         .build(),
                         callback,
                         MediaRouter.CALLBACK_FLAG_PERFORM_ACTIVE_SCAN);

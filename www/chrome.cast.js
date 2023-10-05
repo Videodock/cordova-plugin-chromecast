@@ -544,7 +544,7 @@ var _session;
  * @param  {function} errorCallback
  */
 chrome.cast.initialize = function (apiConfig, successCallback, errorCallback) {
-    execute('initialize', apiConfig.sessionRequest.appId, apiConfig.autoJoinPolicy, apiConfig.defaultActionPolicy, function (err) {
+    execute('initialize', apiConfig.autoJoinPolicy, apiConfig.defaultActionPolicy, function (err) {
         if (!err) {
             // Don't set the listeners config until success
             _initialized = true;
