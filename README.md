@@ -5,13 +5,37 @@
 
 # Installation
 
-> Use a commit hash to prevent dependency hijacking
+To install this fork, you can use the full GitHub URL with commit hash. Always try using a commit hash to prevent 
+installing malicious code.
 
 ```
 cordova plugin add https://github.com/Videodock/cordova-plugin-chromecast.git#d82f07e26a53df6322043403e4dc98bb2eeb4e39
 ```
 
-If you have trouble installing the plugin or running the project for iOS, from `/platforms/ios/` try running:  
+## Android
+
+Add the following metadata to your AndroidManifest.xml inside the `<application>` tag.
+
+Replace `_APP_ID_` with your receiver application id.
+
+```xml
+<manifest>
+  <application>
+    <activity>
+      ...
+    </activity>
+    <meta-data
+            android:name="com.google.android.gms.cast.framework.RECEIVER_APPLICATION_ID"
+            android:value="_APP_ID_" />
+  </application>
+</manifest>
+```
+
+
+## iOS
+
+If you have trouble installing the plugin or running the project for iOS, from `/platforms/ios/` try running:
+
 ```bash
 sudo gem install cocoapods
 pod repo update
@@ -50,6 +74,66 @@ The "*Description" key strings will be used when asking the user for permission 
 </platform>
 ```
 
+1. In AppDelegate.m (or AppDelegate.swift) add
+
+```
+#import <GoogleCast/GoogleCast.h>
+```
+
+```swift
+import GoogleCast
+```
+
+and insert the following in the `application:didFinishLaunchingWithOptions` method, ideally at the beginning:
+
+```
+NSString *receiverAppID = kGCKDefaultMediaReceiverApplicationID; // or @"ABCD1234"
+GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:receiverAppID];
+GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
+[GCKCastContext setSharedInstanceWithOptions:options];
+```
+
+```swift
+let receiverAppID = kGCKDefaultMediaReceiverApplicationID // or "ABCD1234"
+let criteria = GCKDiscoveryCriteria(applicationID: receiverAppID)
+let options = GCKCastOptions(discoveryCriteria: criteria)
+GCKCastContext.setSharedInstanceWith(options)
+```
+
+If using a custom receiver, replace kGCKDefaultMediaReceiverApplicationID with your receiver app id.
+
+You can also automatically set the receiver ID by parsing the Bonjour Services string. This is useful when you have 
+multiple Info.plist files for different environments. 
+
+```swift
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        initializeCastSender()
+        return true
+    }
+    
+    func initializeCastSender() {
+        if let value = Bundle.init(for: AppDelegate.self).infoDictionary?["NSBonjourServices"] as? [String] {
+            
+            if let rule = value.first(where: { $0.hasSuffix("._googlecast._tcp") }) {
+                let startIndex = rule.index(rule.startIndex, offsetBy: 1)
+                let endIndex = rule.index(rule.startIndex, offsetBy: 9)
+                let receiverAppID = String(rule[startIndex..<endIndex]);
+                
+                let criteria = GCKDiscoveryCriteria(applicationID: receiverAppID)
+                let options = GCKCastOptions(discoveryCriteria: criteria)
+                
+                GCKCastContext.setSharedInstanceWith(options)
+                
+                print("Initialized Cast SDK with appId: \(receiverAppID)")
+            } else {
+                print("Couldn't initialize Cast SDK, NSBonjourServices is defined, but couldn't find _<appId>._googlecast._tcp in the Array");
+            }
+        } else {
+            print("Couldn't initialize Cast SDK, NSBonjourServices is missing from the Info.plist");
+        }
+    }
+```
+
 ## Chromecast Icon Assets  
 [chromecast-assets.zip](https://github.com/jellyfin/cordova-plugin-chromecast/wiki/chromecast-assets.zip)
 
@@ -84,6 +168,15 @@ But in **cordova-plugin-chromecast** you do:
 document.addEventListener("deviceready", function () {
     // start using the api!
 });
+```
+
+The `SessionRequest#appId` property is not used to define the receiver app and can be set to an empty string to disable the warning.
+Reason for this is that the Cast SDK can be initialized on app startup. Also, for iOS, the Info.plist must be configured with your receiver ID. This makes it easy to mis align the application ID in the initialization and native config.  
+```js
+var sessionRequest = new chrome.cast.SessionRequest('A11B22C'); // doesn't use A11B22C (triggers console warning)
+var sessionRequest = new chrome.cast.SessionRequest(''); // disables console warning
+
+var apiConfig = new chrome.cast.ApiConfig(sessionRequest);
 ```
 
 

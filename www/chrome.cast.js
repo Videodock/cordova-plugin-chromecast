@@ -544,7 +544,11 @@ var _session;
  * @param  {function} errorCallback
  */
 chrome.cast.initialize = function (apiConfig, successCallback, errorCallback) {
-    execute('initialize', apiConfig.sessionRequest.appId, apiConfig.autoJoinPolicy, apiConfig.defaultActionPolicy, function (err) {
+    if (apiConfig.sessionRequest.appId && 'warn' in window.console) {
+        console.warn('cordova-plugin-chromecast', 'The initialize command doesn\'t respect the `SessionId#appId` (see readme for more information)');
+    }
+
+    execute('initialize', apiConfig.autoJoinPolicy, apiConfig.defaultActionPolicy, function (err) {
         if (!err) {
             // Don't set the listeners config until success
             _initialized = true;

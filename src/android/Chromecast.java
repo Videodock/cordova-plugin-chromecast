@@ -171,14 +171,13 @@ public final class Chromecast extends CordovaPlugin {
     /**
      * Initialize all of the MediaRouter stuff with the AppId.
      * For now, ignore the autoJoinPolicy and defaultActionPolicy; those will come later
-     * @param appId               The appId we're going to use for ALL session requests
      * @param autoJoinPolicy      tab_and_origin_scoped | origin_scoped | page_scoped
      * @param defaultActionPolicy create_session | cast_this_tab
      * @param callbackContext called with .success or .error depending on the result
      * @return true for cordova
      */
-    public boolean initialize(final String appId, String autoJoinPolicy, String defaultActionPolicy, final CallbackContext callbackContext) {
-        connection.initialize(appId, callbackContext);
+    public boolean initialize(String autoJoinPolicy, String defaultActionPolicy, final CallbackContext callbackContext) {
+        connection.initialize(callbackContext);
         return true;
     }
 
