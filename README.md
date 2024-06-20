@@ -41,6 +41,36 @@ sudo gem install cocoapods
 pod repo update
 pod install
 ```
+### Privacy Manifest
+
+Apple mandates that app developers specify approved reasons for API usage to enhance user privacy. By May 1st, 2024, it's required to include these reasons when submitting apps to the App Store Connect.
+
+When using this specific plugin in your app, you must create a `PrivacyInfo.xcprivacy` file in your XCode project, specifying the usage reasons.
+
+**This plugin maps `kGCKMetadataKeyCreationDate` from the [Chromecast API](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_metadata) to `creationDate` from Apple. The recommended reason is [C617.1](https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_use_of_required_reason_api#4278393).**
+
+### Example PrivacyInfo.xcprivacy
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>NSPrivacyAccessedAPITypes</key>
+    <array>
+      <!-- Add this dict entry to the array if the PrivacyInfo file already exists -->
+      <dict>
+        <key>NSPrivacyAccessedAPIType</key>
+        <string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+        <key>NSPrivacyAccessedAPITypeReasons</key>
+        <array>
+          <string>C617.1</string>
+        </array>
+      </dict>
+    </array>
+  </dict>
+</plist>
+```
 
 ### Additional iOS Installation Instructions
 To **distribute** an iOS app with this plugin you must add usage descriptions to your project's `config.xml`.  
