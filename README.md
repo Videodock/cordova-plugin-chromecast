@@ -1,18 +1,19 @@
-<h1 align="center">cordova-plugin-chromecast</h1>
-<h3 align="center">Control Chromecast from your Cordova app</h3>
+# cordova-plugin-chromecast
 
----
+> [!NOTE]
+> This repository is a fork of https://github.com/jellyfin-archive/cordova-plugin-chromecast and maintained each quarter
+> by https://github.com/Videodock
 
-# Installation
+## Installation
 
 To install this fork, you can use the full GitHub URL with commit hash. Always try using a commit hash to prevent 
-installing malicious code.
+installing malicious code. This package is not published on NPM.
 
 ```
-cordova plugin add https://github.com/Videodock/cordova-plugin-chromecast.git#d82f07e26a53df6322043403e4dc98bb2eeb4e39
+cordova plugin add https://github.com/Videodock/cordova-plugin-chromecast.git#5aca0b94b11c3c169d46c9ba1c4adfb6eaa8de46
 ```
 
-## Android
+### Android
 
 Add the following metadata to your AndroidManifest.xml inside the `<application>` tag.
 
@@ -32,7 +33,7 @@ Replace `_APP_ID_` with your receiver application id.
 ```
 
 
-## iOS
+### iOS
 
 If you have trouble installing the plugin or running the project for iOS, from `/platforms/ios/` try running:
 
@@ -41,7 +42,7 @@ sudo gem install cocoapods
 pod repo update
 pod install
 ```
-### Privacy Manifest
+#### Privacy Manifest
 
 Apple mandates that app developers specify approved reasons for API usage to enhance user privacy. By May 1st, 2024, it's required to include these reasons when submitting apps to the App Store Connect.
 
@@ -49,7 +50,7 @@ When using this specific plugin in your app, you must create a `PrivacyInfo.xcpr
 
 **This plugin maps `kGCKMetadataKeyCreationDate` from the [Chromecast API](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_metadata) to `creationDate` from Apple. The recommended reason is [C617.1](https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_use_of_required_reason_api#4278393).**
 
-### Example PrivacyInfo.xcprivacy
+#### Example PrivacyInfo.xcprivacy
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -72,7 +73,7 @@ When using this specific plugin in your app, you must create a `PrivacyInfo.xcpr
 </plist>
 ```
 
-### Additional iOS Installation Instructions
+#### Additional iOS Installation Instructions
 To **distribute** an iOS app with this plugin you must add usage descriptions to your project's `config.xml`.  
 The "*Description" key strings will be used when asking the user for permission to use the microphone/bluetooth/local network.  
 ```xml
@@ -116,7 +117,7 @@ import GoogleCast
 
 and insert the following in the `application:didFinishLaunchingWithOptions` method, ideally at the beginning:
 
-```
+```java
 NSString *receiverAppID = kGCKDefaultMediaReceiverApplicationID; // or @"ABCD1234"
 GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:receiverAppID];
 GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
@@ -164,18 +165,15 @@ multiple Info.plist files for different environments.
     }
 ```
 
-## Chromecast Icon Assets  
-[chromecast-assets.zip](https://github.com/jellyfin/cordova-plugin-chromecast/wiki/chromecast-assets.zip)
-
-# Supports
+## Supports
 
 **Android** 4.4+ (may support lower, untested)  
 **iOS** 10.0+ (The [Google Cast iOS Sender SDK 4.5.0](https://developers.google.com/cast/docs/release-notes#september-14,-2020) says iOS 10+ but all tests on the plugin work fine for iOS 9.3.5, so it appears to work on iOs 9 anyways. :/)
 
-## Quirks
+### Quirks
 * Android 4.4 (maybe 5.x and 6.x) are not able automatically rejoin/resume a chromecast session after an app restart.  
 
-# Usage
+## Usage
 
 This project attempts to implement the [official Google Cast API for Chrome](https://developers.google.com/cast/docs/reference/chrome#chrome.cast) within the Cordova webview.  
 This means that you should be able to write almost identical code in cordova as you would if you were developing for desktop Chrome.  
@@ -212,9 +210,6 @@ var apiConfig = new chrome.cast.ApiConfig(sessionRequest);
 
 ### Example Usage
 Here is a simple [example](doc/example.js) that loads a video, pauses it, and ends the session.
-
-If you want more detailed code examples, please ctrl+f for the function of interest in [tests_auto.js](tests/www/js/tests_auto.js).  
-The other test files may contain code examples of interest as well: [[tests_manual_primary_1.js](tests/www/js/tests_manual_primary_1.js), [tests_manual_primary_2.js](tests/www/js/tests_manual_primary_2.js), [tests_manual_secondary.js](tests/www/js/tests_manual_secondary.js)]
 
 ## API
 Here are the supported [Chromecast API]((https://developers.google.com/cast/docs/reference/chrome#chrome.cast)) methods.  Any object types required by any of these methods are also supported. (eg. [chrome.cast.ApiConfig](https://developers.google.com/cast/docs/reference/chrome/chrome.cast.ApiConfig)).  You can search [chrome.cast.js](www/chrome.cast.js) to check if an API is supported.
@@ -293,9 +288,9 @@ isNearbyDevice {boolean} - Is it a device only accessible via guest mode?
 ```
 
 
-# Plugin Development
+## Plugin Development
 
-## Setup
+### Setup
 
 Follow these direction to set up for plugin development:
 
@@ -305,7 +300,7 @@ Follow these direction to set up for plugin development:
   * `cordova plugin add --link <path to plugin>/tests`
   * This --link** option may require **admin permission**
 
-#### **About the `--link` flag
+### **About the `--link` flag
 The `--link` flag allows you to modify the native code (java/swift/obj-c) directly in the relative platform folder if desired.
   * This means you can work directly from Android Studio/Xcode!
   * Note: Be careful about adding and deleting files.  These changes will be exclusive to the platform folder and will not be transferred back to your plugin folder.
@@ -321,49 +316,3 @@ The `--link` flag allows you to modify the native code (java/swift/obj-c) direct
 Run `npm test` to ensure your code fits the styling.  It will also find some errors.
 
   * If errors are found, you can try running `npm run style`, this will attempt to automatically fix the errors.
-
-You can view what the plug tests should look like here:  
-* [Auto Tests - Desktop Chrome](https://youtu.be/CdUwFrEht_A)
-* [Auto Tests - Android or iOS](https://youtu.be/VUtiXee6m_8)
-* [Manual Tests - Android or iOS](https://youtu.be/cgyOpBRXdEI)
-* [Interaction Tests - Android & iOS](https://youtu.be/rphp_s5ruzM)
-* [Interaction Tests - Android (or iOS) & Desktop Chrome](https://youtu.be/1ccBHqeMLhs)
-
-### Tests Mobile
-
-Requirements:
-* A chromecast device
-
-How to run the tests:
-* Follow [setup](#setup)
-* Change `config.xml`'s content tag to `<content src="plugins/cordova-plugin-chromecast-tests/www/html/tests.html" />`
-
-Auto tests:
-* Run the app, select auto tests, let it do its thing
-
-Manual tests:
-* This tests tricky features of chromecast such as:
-  * Resume casting session after page reload / app restart
-  * Interaction between 2 devices connected to the same session
-* You will need to be able to run the tests from 2 different devices (preferred) or between a device and chrome desktop browser
-  * To use the chrome desktop browser see [Tests Chrome](#tests-chrome)
-  * [What a successful manual run looks like](https://github.com/jellyfin/cordova-plugin-chromecast/wiki/img/manual-tests-success.jpg)
-  
-[Why we chose a non-standard test framework](https://github.com/jellyfin/cordova-plugin-chromecast/issues/50)
-
-### Tests Chrome
-
-The auto tests also run in desktop chrome.  
-They use the google provided cast_sender.js.  
-These are particularly useful for ensuring we are following the [official Google Cast API for Chrome](https://developers.google.com/cast/docs/reference/chrome#chrome.cast) correctly.  
-To run the tests:
-* run: `npm run host-chrome-tests [port default=8432]`
-* Navigate to: [http://localhost:8432/html/tests.html](http://localhost:8432/html/tests.html)
-
-## Contributing
-
-* Write a test for your contribution if applicable (for a bug fix, new feature, etc)
-  * You should test on [Chrome](#tests-chrome) first to ensure you are following [Google Cast API](https://developers.google.com/cast/docs/reference/chrome#chrome.cast) behavior correctly
-  * If the test does not pass on [Chrome](#tests-chrome) we should not be implementing it either (unless it is a `chrome.cast.cordova` function)
-* Make sure all tests pass ([Code Format](#code-format), [Tests Mobile](#tests-mobile), and [Tests Chrome](#tests-chrome))
-* Update documentation as necessary
