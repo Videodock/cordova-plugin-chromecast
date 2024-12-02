@@ -35,7 +35,7 @@
       <meta-data android:name="com.google.android.gms.cast.framework.RECEIVER_APPLICATION_ID" android:value="CC1AD845" />
     </config-file>
 
-    <framework src="com.google.android.gms:play-services-cast-framework:21.5.0" />
+    <framework src="com.google.android.gms:play-services-cast-framework:22.0.0" />
 
     <source-file src="src/android/CastOptionsProvider.java" target-dir="src/acidhax/cordova/chromecast" />
     <source-file src="src/android/Chromecast.java" target-dir="src/acidhax/cordova/chromecast" />
