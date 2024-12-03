@@ -20,6 +20,11 @@
 -->
 ## Release Notes for cordova-plugin-chromecast
 
+### 3.2.0 (2024-12-03)
+
+* Update dependencies
+* (android) Updated Google Cast SDK (android -> 22.0.0)
+
 ### 3.1.0 (2024-09-20)
 
 * Update dependencies
