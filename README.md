@@ -1,13 +1,13 @@
 # cordova-plugin-chromecast
 
 > [!NOTE]
-> This repository is a fork of https://github.com/jellyfin-archive/cordova-plugin-chromecast and maintained each quarter
+> This repository is a fork of https://github.com/jellyfin-archive/cordova-plugin-chromecast and is quarterly maintained
 > by https://github.com/Videodock
 
 ## Installation
 
-To install this fork, you can use the full GitHub URL with commit hash. Always try using a commit hash to prevent 
-installing malicious code. This package is not published on NPM.
+To install this fork, you can use the full GitHub URL with commit hash. This is recommended to prevent installing 
+unverified code because this fork is not published on NPM.
 
 ```
 cordova plugin add https://github.com/Videodock/cordova-plugin-chromecast.git#5aca0b94b11c3c169d46c9ba1c4adfb6eaa8de46
