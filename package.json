@@ -23,5 +23,8 @@
     "eslint-plugin-promise": "^6.6.0",
     "eslint-plugin-standard": "^5.0.0",
     "java-checkstyle": "0.1.0"
+  },
+  "resolutions": {
+    "minimatch/brace-expansion": "1.1.12"
   }
 }
