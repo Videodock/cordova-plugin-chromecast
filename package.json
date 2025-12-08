@@ -25,6 +25,7 @@
     "java-checkstyle": "0.1.0"
   },
   "resolutions": {
-    "minimatch/brace-expansion": "1.1.12"
+    "minimatch/brace-expansion": "1.1.12",
+    "js-yaml":"4.1.1"
   }
 }
