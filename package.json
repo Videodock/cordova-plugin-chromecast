@@ -17,15 +17,11 @@
     "eslint": "^8.57.1",
     "eslint-config-semistandard": "^17.0.0",
     "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-n": "^17.14.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-n": "^17.24.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.6.0",
     "eslint-plugin-standard": "^5.0.0",
     "java-checkstyle": "0.1.0"
-  },
-  "resolutions": {
-    "minimatch/brace-expansion": "1.1.12",
-    "js-yaml": "4.1.1"
   }
 }
