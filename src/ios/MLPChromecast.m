@@ -128,28 +128,45 @@ int scansRunning = 0;
 }
 
 - (void)requestSession:(CDVInvokedUrlCommand*) command {
+    if ([self.viewController.presentedViewController isKindOfClass:[UIAlertController class]]) {
+        return;
+    }
+
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Cast to" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+
     GCKDiscoveryManager* discoveryManager = GCKCastContext.sharedInstance.discoveryManager;
+
+    // Add devices
     for (int i = 0; i < [discoveryManager deviceCount]; i++) {
         GCKDevice* device = [discoveryManager deviceAtIndex:i];
         [alert addAction:[UIAlertAction actionWithTitle:device.friendlyName style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [self.currentSession joinDevice:device cdvCommand:command];
         }]];
     }
-    [alert addAction:[UIAlertAction actionWithTitle:@"Stop Casting" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [self.currentSession endSessionWithCallback:^{
-            [self sendError:@"cancel" message:@"" command:command];
-        } killSession:YES];
-    }]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        [self.currentSession.remoteMediaClient stop];
-        [self sendError:@"cancel" message:@"" command:command];
-    }]];
-    if (IDIOM == IPAD) {
-        alert.popoverPresentationController.sourceView = self.webView;
-        CGRect frame = CGRectMake(self.webView.frame.size.width/2, self.webView.frame.size.height, self.webView.bounds.size.width/2, self.webView.bounds.size.height);
-        alert.popoverPresentationController.sourceRect = frame;
+
+    // Stop Casting Action (Only shows if a session is active)
+    if (GCKCastContext.sharedInstance.sessionManager.hasConnectedSession) {
+        [alert addAction:[UIAlertAction actionWithTitle:@"Stop Casting" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+            [self.currentSession endSessionWithCallback:^{
+                [self sendError:@"cancel" message:@"Session ended" command:command];
+            } killSession:YES];
+        }]];
     }
+
+    // Cancel Action
+    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        // Just inform Cordova it was cancelled, DON'T stop the remote client
+        [self sendError:@"cancel" message:@"User dismissed dialog" command:command];
+    }]];
+
+    // iPad presentation logic
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        alert.popoverPresentationController.sourceView = self.webView;
+        alert.popoverPresentationController.sourceRect = CGRectMake(self.webView.frame.size.width/2,
+                                                                    self.webView.frame.size.height, 0, 0);
+        alert.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionDown;
+    }
+
     [self.viewController presentViewController:alert animated:YES completion:nil];
 }
 
