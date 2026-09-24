@@ -313,6 +313,6 @@ The `--link` flag allows you to modify the native code (java/swift/obj-c) direct
 
 ### Code Format
 
-Run `npm test` to ensure your code fits the styling.  It will also find some errors.
+Run `pnpm test` to ensure your code fits the styling.  It will also find some errors.
 
-  * If errors are found, you can try running `npm run style`, this will attempt to automatically fix the errors.
+  * If errors are found, you can try running `pnpm run style`, this will attempt to automatically fix the errors.
