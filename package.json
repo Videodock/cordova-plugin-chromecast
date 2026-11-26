@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-chromecast",
-  "version": "3.5.1",
+  "version": "3.5.2",
   "packageManager": "pnpm@11.22.0",
   "scripts": {
     "host-chrome-tests": "node tests/www/chrome/host-tests.js",
